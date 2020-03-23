@@ -45,14 +45,11 @@
 		},
 		created() {
 			let config = {
-				url: "/blog/getBlog",
-				params: {
-					id: this.$route.params.id
-				}
+				url: "/blog/get_blog/"+this.$route.params.id,
 			};
 			request(config).then(response => {
-				this.blog = response.data;
-				//console.log(this.blog);
+				this.blog = response.data.data;
+				console.log(this.blog);
 				setTimeout(function () {
 					Prism.highlightAll();
 					tocbot.init({
@@ -66,6 +63,7 @@
 						hasInnerContainers: true
 					});
 				},10);
+
 			}).catch(err => {
 				console.log(err);
 			});
@@ -114,7 +112,6 @@
 		position: fixed;
 		font-weight: bolder;
 		font-size: 12px;
-		margin: auto;
 	}
 
 	.aside-btn a {

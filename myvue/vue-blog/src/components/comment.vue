@@ -15,12 +15,12 @@
 					<div v-show="isLogin" id="comment">
 						<div class="textarea">
 							<h2 style="color: blue;margin-bottom: 10px;" v-show="isReply">{{ replyContent }}</h2>
-							<el-input type="textarea" :rows="8" placeholder="请输入内容" v-model="comment"></el-input>
+							<el-input type="textarea" :rows="8" placeholder="赶快来评论吧~~~~" v-model="comment"></el-input>
 						</div>
-						<el-button type="primary" @click="submit()" round>提交评论</el-button>
+						<el-button type="primary" @click="submit()" round>提交</el-button>
 						<el-button v-show="isReply" type="primary" @click="cancel()" round>取消回复</el-button>
 					</div>
-					<div class="item-box" v-for="(comment,index) in data.commentAndReplies" :key="index">
+					<div class="item-box" v-for="(comment,index) in data.data" :key="index">
 						<div class="item">
 							<div class="whisper-title">
 								<i class="el-icon-date"></i>
@@ -43,7 +43,7 @@
 								type="warning"
 								round
 								size="small"
-								@click="reply(comment.rootComment.username,comment.rootComment.id,comment.rootComment.content)"
+								@click="replyFunction(comment.rootComment.username,comment.rootComment.id,comment.rootComment.content)"
 							>回复
 							</el-button>
 							<div class="op-list">
@@ -99,7 +99,7 @@
 										type="warning"
 										round
 										size="small"
-										@click="reply(reply.username,reply.id,reply.content)"
+										@click="replyFunction(reply.username,reply.id,reply.content)"
 									>回复
 									</el-button>
 								</div>
@@ -114,7 +114,7 @@
 							:page-sizes="[10, 30, 50, 100]"
 							:page-size="count"
 							layout="total, sizes, prev, pager, next, jumper"
-							:total="data.total"
+							:total="data.count"
 							style="white-space: pre-wrap;">
 						</el-pagination>
 					</div>
@@ -133,7 +133,7 @@
 		data() {
 			return {
 				data: {},
-				isLogin: false,
+				isLogin: true,
 				isShow: "review-version",
 				unShow: "feige-hidden",
 				up: "el-icon-arrow-up",
@@ -164,7 +164,7 @@
 			submit: function () {
 				//#{content},#{parentId},#{good},#{createTime},#{replier},#{blogId},#{userId}
 				let config = {
-					url: "/comment/addComment",
+					url: "/comment/add_comment",
 					params: {
 						content: this.comment,
 						parentId: this.parentId,
@@ -176,11 +176,11 @@
 				};
 				request(config).then(response => {
 					this.data = response.data;
-					if (response.data === "SUCCESS") {
+					if (response.data.code === "200") {
 						this.comment = '';
 						this.isReply = false;
 						let config1 = {
-							url: "/comment/getComments",
+							url: "/comment/get_comments",
 							params: {
 								blogId: this.$route.params.id,
 								page: this.currentPage,
@@ -200,43 +200,8 @@
 					.catch(err => {
 						console.log(err);
 					});
-				// this.$axios
-				// 	.get("http://localhost:8080/comment/addComment", {
-				// 		params: {
-				// 			content: this.comment,
-				// 			parentId: this.parentId,
-				// 			good: this.good,
-				// 			replier: this.replier,
-				// 			blogId: this.blogId,
-				// 			userId: this.userId
-				// 		}
-				// 	})
-				// 	.then(response => {
-				// 		if (response.data === "SUCCESS") {
-				// 			this.$axios
-				// 				.get("http://localhost:8080/comment/getComments", {
-				// 					params: {
-				// 						blogId: 1,
-				// 						page: this.currentPage,
-				// 						count: this.count
-				// 					}
-				// 				})
-				// 				.then(response => {
-				// 					this.data = response.data;
-				//
-				// 				})
-				// 				.catch(err => {
-				// 					console.log(err);
-				// 				});
-				// 		} else {
-				// 			console.log(response.data);
-				// 		}
-				// 	})
-				// 	.catch(err => {
-				// 		console.log(err);
-				// 	});
 			},
-			reply: function (name, id , content) {
+			replyFunction: function (name, id , content) {
 				$("html").animate({scrollTop:$('#comment').offset().top - 60 },300,function () {
 					$(".el-textarea__inner").focus();
 				});
@@ -261,7 +226,7 @@
 			handleSizeChange: function (val) {
 				this.count = val;
 				let config = {
-					url: "/comment/getComments",
+					url: "/comment/get_comments",
 					params: {
 						blogId: this.$route.params.id,
 						page: this.currentPage,
@@ -274,25 +239,11 @@
 					.catch(err => {
 						console.log(err);
 					});
-				// this.$axios
-				// 	.get("http://localhost:8080/comment/getComments", {
-				// 		params: {
-				// 			blogId: 1,
-				// 			page: this.currentPage,
-				// 			count: this.count
-				// 		}
-				// 	})
-				// 	.then(response => {
-				// 		this.data = response.data;
-				// 	})
-				// 	.catch(err => {
-				// 		console.log(err);
-				// 	});
 			},
 			handleCurrentChange: function (val) {
 				this.currentPage = val;
 				let config = {
-					url: "/comment/getComments",
+					url: "/comment/get_comments",
 					params: {
 						blogId: this.$route.params.id,
 						page: this.currentPage,
@@ -305,35 +256,14 @@
 					.catch(err => {
 						console.log(err);
 					});
-				// this.$axios
-				// 	.get("http://localhost:8080/comment/getComments", {
-				// 		params: {
-				// 			blogId: 1,
-				// 			page: this.currentPage,
-				// 			count: this.count
-				// 		}
-				// 	})
-				// 	.then(response => {
-				// 		this.data = response.data;
-				// 	})
-				// 	.catch(err => {
-				// 		console.log(err);
-				// 	});
 			},
 			login: function () {
 				this.$router.push({name: 'Login'});
 			}
 		},
 		created() {
-			// let params = {
-			// 	blogId: 1,
-			// 		page: this.currentPage,
-			// 		count: this.count
-			// };
-			// this.data = request("http://localhost:8080/comment/getComments",params);
-			// console.log(this.data)
 			let config = {
-				url: "/comment/getComments",
+				url: "/comment/get_comments",
 				params: {
 					blogId: this.$route.params.id,
 					page: this.currentPage,
@@ -346,21 +276,6 @@
 				.catch(err => {
 					console.log(err);
 				});
-			// 	this.$axios
-			// 		.get("http://localhost:8080/comment/getComments", {
-			// 			params: {
-			// 				blogId: 1,
-			// 				page: this.currentPage,
-			// 				count: this.count
-			// 			}
-			// 		})
-			// 		.then(response => {
-			// 			this.data = response.data;
-			// 		})
-			// 		.catch(err => {
-			// 			console.log(err);
-			// 		});
-			// }
 		}
 	}
 </script>

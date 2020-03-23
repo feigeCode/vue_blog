@@ -36,19 +36,12 @@
 					<span class="aside-title">分类</span>
 				</div>
 				<ul class="type">
-					<li>python</li>
-					<li>java</li>
-					<li>vue</li>
-					<li>springBoot</li>
-					<li>spring</li>
-					<li>mybatis</li>
-					<li>springMvc</li>
-					<li>springCloud</li>
+					<li v-for="(type,index) in data.data" :key="index">{{ type.typeName }}</li>
 				</ul>
 			</el-card>
 		</div>
 		<div class="aside-block">
-			<el-card class="box-card">
+			<el-card class="box-card" >
 				<div slot="header" class="clearfix">
 					<span class="article-title">热门文章</span>
 				</div>
@@ -70,12 +63,36 @@
 </template>
 
 <script>
+	import {request} from "./common/requests";
+
 	export default {
 		name: "Aside",
+		data() {
+			return {
+				data:{}
+			}
+		},
 		methods: {
 			errorHandler: function () {
 				return 'error';
 			}
+		},
+		created() {
+			let config = {
+				url: "/type/get_types",
+				params: {
+					page: 1,
+					limit: 30,
+					searchContent: null
+				}
+			};
+			request(config)
+				.then(response => {
+					this.data = response.data;
+				})
+				.catch(err => {
+					console.log(err);
+				})
 		}
 	}
 </script>
@@ -95,7 +112,7 @@
 	}
 	.aside-block {
 		width: 345px;
-		height: 300px;
+		height: auto;
 		margin-bottom: 10px;
 	}
 	.aside-btm {

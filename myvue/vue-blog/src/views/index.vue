@@ -6,7 +6,7 @@
 				<ul>
 					<li v-for="(blog,index) in data.data" :key="index">
 						<article class="blog">
-							<h1 class="title" @click="blogNav(blog.id)">{{ blog.title }}</h1>
+							<h1 class="title" @click="blogNav(blog.id)" style="background: palegreen">{{ blog.title }}</h1>
 							<hr style="color:green;"/>
 							<div class="time">
                 <span>
@@ -74,7 +74,7 @@
 		},
 		created() {
 			let config = {
-				url: "/blog/getBlogs",
+				url: "/blog/get_blogs",
 				params: {
 					page: this.currentPage,
 					limit: this.count,
@@ -82,7 +82,8 @@
 				}
 			};
 			request(config).then(response => {
-				this.data = response.data
+				console.log(response.data);
+				this.data = response.data;
 			}).catch(err => {
 				console.log(err)
 			})
@@ -91,7 +92,7 @@
 			handleSizeChange: function (val) {
 				this.count = val;
 				let config = {
-					url: "/blog/getBlogs",
+					url: "/blog/get_blogs",
 					params: {
 						page: this.currentPage,
 						limit: this.count,
@@ -99,7 +100,7 @@
 					}
 				};
 				request(config).then(response => {
-					this.data = response.data
+					this.data = response.data;
 				}).catch(err => {
 					console.log(err)
 				})
@@ -107,7 +108,7 @@
 			handleCurrentChange: function (val) {
 				this.currentPage = val;
 				let config = {
-					url: "/blog/getBlogs",
+					url: "/blog/get_blogs",
 					params: {
 						page: this.currentPage,
 						limit: this.count,
@@ -115,7 +116,7 @@
 					}
 				};
 				request(config).then(response => {
-					this.data = response.data
+					this.data = response.data;
 				}).catch(err => {
 					console.log(err)
 				})
@@ -135,7 +136,7 @@
 		padding: 5px 10px;
 		border: 1px solid burlywood;
 		border-radius: 20px;
-		background-color: whitesmoke;
+		background-color: white;
 		overflow-y: hidden;
 	}
 
